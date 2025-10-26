@@ -30,14 +30,16 @@ async function checkTrips() {
   }
 }
 
-// هر ۳۰ ثانیه یک بار بررسی کن
+// Run every 30 seconds
 setInterval(checkTrips, 30000);
 
-// لازم است برای Render:
+// Required for Render free service
 app.get("/", (req, res) => res.send("Bot is running..."));
 
 app.listen(process.env.PORT || 3000, () => {
   console.log("✅ Server is running on port", process.env.PORT || 3000);
 });
+
+
 
 
