@@ -2,6 +2,7 @@ import express from "express";
 import fetch from "node-fetch";
 
 const app = express();
+app.use(express.json());
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const CHAT_ID = process.env.CHAT_ID;
@@ -30,15 +31,28 @@ async function checkTrips() {
   }
 }
 
-// Run every 30 seconds
-setInterval(checkTrips, 30000);
+// Handle /start command
+app.post(`/webhook/${BOT_TOKEN}`, async (req, res) => {
+  const msg = req.body.message;
+  if (msg?.text === "/start") {
+    const text = "✅ Bot is running and ready to send trip updates!";
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${msg.chat.id}&text=${encodeURIComponent(
+      text
+    )}`;
+    await fetch(url);
+  }
+  res.sendStatus(200);
+});
 
-// Required for Render free service
 app.get("/", (req, res) => res.send("Bot is running..."));
+
+setInterval(checkTrips, 30000);
 
 app.listen(process.env.PORT || 3000, () => {
   console.log("✅ Server is running on port", process.env.PORT || 3000);
 });
+
+
 
 
 
